@@ -1,0 +1,21 @@
+;; SPDX-License-Identifier: LGPL
+
+;; A FunC implementation for a serialized list of arbitrary length.
+
+;; Loads the list from the reference in a bigger object
+(slice, slice) load_list(slice body) impure {
+    slice list = body~load_ref().begin_parse();
+    return (body, list);
+}
+
+;; Whether the list has ended
+(slice, int) end(slice list) impure {
+    int result = list.slice_data_empty?();
+    return (list, result);
+}
+
+;; Move to the next chunk in the list
+(slice, slice) next(slice list) impure {
+    slice chunk = list~load_ref().begin_parse();
+    return (list, chunk);
+}
